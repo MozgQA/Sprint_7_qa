@@ -4,11 +4,9 @@ import api.models.courier.Courier;
 import io.qameta.allure.Step;
 import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.response.Response;
-import io.restassured.specification.ProxySpecification;
 import io.restassured.specification.RequestSpecification;
 
 import static io.restassured.RestAssured.given;
-import static io.restassured.RestAssured.proxy;
 
 public class CourierClient {
     private final static String ENDPOINT_CREATE_URL = "/api/v1/courier";
@@ -22,7 +20,7 @@ public class CourierClient {
     }
 
     @Step("Send POST request to /api/v1/courier/login")
-    public Response login(Courier courier){
+    public Response login(Courier courier) {
         return spec
                 .filter(new AllureRestAssured())
                 .body(courier)
@@ -31,7 +29,7 @@ public class CourierClient {
     }
 
     @Step("Send POST request to /api/v1/courier")
-    public Response create(Courier courier){
+    public Response create(Courier courier) {
         return spec
                 .body(courier)
                 .when()

@@ -26,7 +26,7 @@ public class GetOrderListTest extends BaseTest {
     @Test
     @DisplayName("Получение списка заказов")
     @Description("Получение списка заказа и проверка статуса ответа")
-    public void getOrderListTest(){
+    public void getOrderListTest() {
         OrderList orderList = orderClient.getOrderList();
         Assert.assertThat(orderList.getOrders(), Matchers.not(Matchers.empty()));
     }
