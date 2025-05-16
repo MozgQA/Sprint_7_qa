@@ -4,18 +4,27 @@ import api.models.courier.Courier;
 import io.qameta.allure.Step;
 import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.response.Response;
+import io.restassured.specification.ProxySpecification;
+import io.restassured.specification.RequestSpecification;
 
 import static io.restassured.RestAssured.given;
+import static io.restassured.RestAssured.proxy;
 
 public class CourierClient {
     private final static String ENDPOINT_CREATE_URL = "/api/v1/courier";
     private final static String ENDPOINT_LOGIN_URL = "/api/v1/courier/login";
+    private final RequestSpecification spec;
+
+    public CourierClient() {
+        this.spec = given()
+                .header("Content-Type", "application/json")
+                .log().all();
+    }
 
     @Step("Send POST request to /api/v1/courier/login")
     public Response login(Courier courier){
-        return given().log().all()
+        return spec
                 .filter(new AllureRestAssured())
-                .header("Content-type", "application/json")
                 .body(courier)
                 .when()
                 .post(ENDPOINT_LOGIN_URL);
@@ -23,8 +32,7 @@ public class CourierClient {
 
     @Step("Send POST request to /api/v1/courier")
     public Response create(Courier courier){
-        return given().log().all()
-                .header("Content-type", "application/json")
+        return spec
                 .body(courier)
                 .when()
                 .post(ENDPOINT_CREATE_URL);

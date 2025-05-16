@@ -14,12 +14,19 @@ import tests.base.BaseTest;
 import static io.restassured.RestAssured.given;
 
 public class GetOrderListTest extends BaseTest {
+    private OrderClient orderClient;
+
+    @Override
+    @Before
+    public void setUp() {
+        super.setUp();
+        orderClient = new OrderClient();
+    }
 
     @Test
     @DisplayName("Получение списка заказов")
     @Description("Получение списка заказа и проверка статуса ответа")
     public void getOrderListTest(){
-        OrderClient orderClient = new OrderClient();
         OrderList orderList = orderClient.getOrderList();
         Assert.assertThat(orderList.getOrders(), Matchers.not(Matchers.empty()));
     }

@@ -4,30 +4,37 @@ import api.client.CourierClient;
 import api.models.courier.Courier;
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
-import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.hamcrest.Matchers;
-import org.junit.Before;
 import org.junit.Test;
 import tests.base.BaseTest;
 
-import static io.restassured.RestAssured.given;
+import static org.apache.http.HttpStatus.*;
 
 public class CreateCourierTest extends BaseTest {
+    private Courier courier;
+    private CourierClient courierClient;
+    @Override
+    public void setUp() {
+        super.setUp();
+        courier = new Courier();
+        courierClient = new CourierClient();
+    }
 
     @Test
     @DisplayName("Успешное создание курьера")
     @Description("Проверка статуса ответа и значения поля для /api/v1/courier (успешный запрос)")
     public void createCourierTest() {
-        CourierClient courierClient = new CourierClient();
         String login = RandomStringUtils.randomAlphanumeric(1, 10);
         String password = RandomStringUtils.randomAlphanumeric(6, 8);
         String firstName = RandomStringUtils.randomAlphabetic(3, 10);
-        Courier courier = new Courier(login, password, firstName);
+        courier.setLogin(login);
+        courier.setPassword(password);
+        courier.setFirstName(firstName);
         Response response = courierClient.create(courier);
         response.then().log().all()
-                .assertThat().body("ok", Matchers.is(true)).and().statusCode(201);
+                .assertThat().body("ok", Matchers.is(true)).and().statusCode(SC_CREATED);
 
     }
 
@@ -35,100 +42,94 @@ public class CreateCourierTest extends BaseTest {
     @DisplayName("Создание двух одинаковых курьеров")
     @Description("Проверка статуса ответа и наличия сообщения при создании двух одинаковых курьеров")
     public void createTwoIdenticalCouriersTest() {
-        CourierClient courierClient = new CourierClient();
         String login = RandomStringUtils.randomAlphanumeric(1, 10);
         String password = RandomStringUtils.randomAlphanumeric(6, 8);
         String firstName = RandomStringUtils.randomAlphabetic(3, 10);
-        Courier courier = new Courier(login, password, firstName);
+        courier.setLogin(login);
+        courier.setPassword(password);
+        courier.setFirstName(firstName);
+
         courierClient.create(courier);
         Response response = courierClient.create(courier);
         response.then().log().all()
-                .assertThat().body("message", Matchers.notNullValue()).and().statusCode(409);
+                .assertThat().body("message", Matchers.notNullValue()).and().statusCode(SC_CONFLICT);
     }
 
     @Test
     @DisplayName("Создание двух курьеров с одинаковыми логинами")
     @Description("Проверка статуса ответа и наличия сообщения при создании двух курьеров с одинаковыми логинами")
     public void createTwoIdenticalLoginTest() {
-        CourierClient courierClient = new CourierClient();
         String login = RandomStringUtils.randomAlphanumeric(1, 10);
         String password = RandomStringUtils.randomAlphanumeric(6, 8);
         String firstName = RandomStringUtils.randomAlphabetic(3, 10);
-        Courier courier = new Courier(login, password, firstName);
+        courier.setLogin(login);
+        courier.setPassword(password);
+        courier.setFirstName(firstName);
+
         courierClient.create(courier);
         courier.setPassword("abracadabra");
         Response response = courierClient.create(courier);
         response.then().log().all()
-                .assertThat().body("message", Matchers.notNullValue()).and().statusCode(409);
+                .assertThat().body("message", Matchers.notNullValue()).and().statusCode(SC_CONFLICT);
     }
 
     @Test
     @DisplayName("Создание курьера без логина и пароля")
     @Description("Проверка статуса ответа и наличия сообщения при создании курьера без логина и пароля (неверный запрос)")
     public void createCourierWithoutLoginAndPassword() {
-        CourierClient courierClient = new CourierClient();
         String firstName = RandomStringUtils.randomAlphabetic(3, 10);
-        Courier courier = new Courier();
         courier.setFirstName(firstName);
         Response response = courierClient.create(courier);
         response.then().log().all()
-                .assertThat().body("message", Matchers.notNullValue()).and().statusCode(400);
+                .assertThat().body("message", Matchers.notNullValue()).and().statusCode(SC_BAD_REQUEST);
     }
 
     @Test
     @DisplayName("Создание курьера без логина и имени")
     @Description("Проверка статуса ответа и наличия сообщения при создании курьера без логина и имени (неверный запрос)")
     public void createCourierWithoutLoginAndFirstName() {
-        CourierClient courierClient = new CourierClient();
-        String password = RandomStringUtils.randomAlphabetic(6, 8);
-        Courier courier = new Courier();
+        String password = RandomStringUtils.randomAlphanumeric(6, 8);
         courier.setPassword(password);
         Response response = courierClient.create(courier);
         response.then().log().all()
-                .assertThat().body("message", Matchers.notNullValue()).and().statusCode(400);
+                .assertThat().body("message", Matchers.notNullValue()).and().statusCode(SC_BAD_REQUEST);
     }
 
     @Test
     @DisplayName("Создание курьера без пароля и имени")
     @Description("Проверка статуса ответа и наличия сообщения при создании курьера без пароля и имени (неверный запрос)")
     public void createCourierWithoutPasswordAndFirstName() {
-        CourierClient courierClient = new CourierClient();
-        String login = RandomStringUtils.randomAlphabetic(3, 10);
-        Courier courier = new Courier();
+        String login = RandomStringUtils.randomAlphanumeric(1, 10);
         courier.setLogin(login);
         Response response = courierClient.create(courier);
         response.then().log().all()
-                .assertThat().body("message", Matchers.notNullValue()).and().statusCode(400);
+                .assertThat().body("message", Matchers.notNullValue()).and().statusCode(SC_BAD_REQUEST);
     }
 
     @Test
     @DisplayName("Создание курьера без пароля")
     @Description("Проверка статуса ответа и наличия сообщения при создании курьера без пароля (неверный запрос)")
     public void createCourierWithoutPassword() {
-        CourierClient courierClient = new CourierClient();
-        String login = RandomStringUtils.randomAlphabetic(1, 10);
+        String login = RandomStringUtils.randomAlphanumeric(1, 10);
         String firstName = RandomStringUtils.randomAlphabetic(3, 10);
-        Courier courier = new Courier();
         courier.setLogin(login);
         courier.setFirstName(firstName);
         Response response = courierClient.create(courier);
         response.then().log().all()
-                .assertThat().body("message", Matchers.notNullValue()).and().statusCode(400);
+                .assertThat().body("message", Matchers.notNullValue()).and().statusCode(SC_BAD_REQUEST);
     }
 
     @Test
     @DisplayName("Создание курьера без логина")
     @Description("Проверка статуса ответа и наличия сообщения при создании курьера без логина (неверный запрос)")
     public void createCourierWithoutLogin() {
-        CourierClient clientStep = new CourierClient();
-        String firstName = RandomStringUtils.randomAlphabetic(3, 10);
         String password = RandomStringUtils.randomAlphanumeric(6, 8);
-        Courier courier = new Courier();
-        courier.setFirstName(firstName);
+        String firstName = RandomStringUtils.randomAlphabetic(3, 10);
         courier.setPassword(password);
-        Response response = clientStep.create(courier);
+        courier.setFirstName(firstName);
+        Response response = courierClient.create(courier);
         response.then().log().all()
-                .assertThat().body("message", Matchers.notNullValue()).and().statusCode(400);
+                .assertThat().body("message", Matchers.notNullValue()).and().statusCode(SC_BAD_REQUEST);
     }
 
 }
