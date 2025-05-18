@@ -7,20 +7,11 @@ import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.Response;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-import tests.base.BaseTest;
+import tests.base.AbstractBaseCourierTest;
 
 import static org.apache.http.HttpStatus.*;
 
-public class CourierLoginTest extends BaseTest {
-    private Courier courier;
-    private CourierClient courierClient;
-
-    @Override
-    public void setUp() {
-        super.setUp();
-        courier = new Courier();
-        courierClient = new CourierClient();
-    }
+public class CourierLoginTest extends AbstractBaseCourierTest {
 
     @Test
     @DisplayName("Курьер входит в систему.")

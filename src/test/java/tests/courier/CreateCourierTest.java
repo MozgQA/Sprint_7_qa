@@ -8,20 +8,12 @@ import io.restassured.response.Response;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import tests.base.AbstractBaseCourierTest;
 import tests.base.BaseTest;
 
 import static org.apache.http.HttpStatus.*;
 
-public class CreateCourierTest extends BaseTest {
-    private Courier courier;
-    private CourierClient courierClient;
-    @Override
-    public void setUp() {
-        super.setUp();
-        courier = new Courier();
-        courierClient = new CourierClient();
-    }
-
+public class CreateCourierTest extends AbstractBaseCourierTest {
     @Test
     @DisplayName("Успешное создание курьера")
     @Description("Проверка статуса ответа и значения поля для /api/v1/courier (успешный запрос)")

@@ -9,6 +9,7 @@ import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.hamcrest.Matchers;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -21,7 +22,7 @@ import static org.apache.http.HttpStatus.SC_CREATED;
 
 @RunWith(Parameterized.class)
 public class CreateOrderTest extends BaseTest {
-    private final Order order;
+    private Order order;
     private OrderClient orderClient;
 
     public CreateOrderTest(Order order) {
@@ -33,6 +34,12 @@ public class CreateOrderTest extends BaseTest {
         super.setUp();
         RestAssured.filters(new AllureRestAssured());
         orderClient = new OrderClient();
+    }
+
+    @After
+    public void tearDown(){
+        order = null;
+        orderClient = null;
     }
 
     @Parameterized.Parameters(name = "Тестовые данные: {0} {1}")

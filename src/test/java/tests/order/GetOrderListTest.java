@@ -6,6 +6,7 @@ import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.RestAssured;
 import org.hamcrest.Matchers;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,6 +22,11 @@ public class GetOrderListTest extends BaseTest {
     public void setUp() {
         super.setUp();
         orderClient = new OrderClient();
+    }
+
+    @After
+    public void tearDown(){
+        orderClient = null;
     }
 
     @Test
