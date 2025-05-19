@@ -42,10 +42,8 @@ public class CourierLoginTest extends AbstractBaseCourierTest {
     @DisplayName("Курьер пытается войти в систему без пароля.")
     @Description("Проверка статуса ответа, когда курьер пытается войти в систему без указания пароля (ошибочный запрос).")
     public void authorizationWithoutPasswordTest() {
-        CourierClient clientStep = new CourierClient();
-        Courier courier = new Courier();
         courier.setLogin("ninja1453");
-        Response response = clientStep.login(courier);
+        Response response = courierClient.login(courier);
         response.then().log().all()
                 .assertThat().statusCode(SC_BAD_REQUEST).and().body("message", Matchers.is("Недостаточно данных для входа"));
     }
