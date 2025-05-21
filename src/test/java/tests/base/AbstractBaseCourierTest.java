@@ -18,6 +18,7 @@ public abstract class AbstractBaseCourierTest extends BaseTest {
 
     @After
     public void tearDown(){
+        courierClient.deleteCourier(courier);
         courier = null;
         courierClient = null;
     }

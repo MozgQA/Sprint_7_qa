@@ -9,8 +9,8 @@ import io.restassured.specification.RequestSpecification;
 import static io.restassured.RestAssured.given;
 
 public class CourierClient {
-    private final static String ENDPOINT_CREATE_URL = "/api/v1/courier";
-    private final static String ENDPOINT_LOGIN_URL = "/api/v1/courier/login";
+    private final static String ENDPOINT_COURIER_URL = "/api/v1/courier";
+    private final static String ENDPOINT_COURIER_LOGIN_URL = "/api/v1/courier/login";
     private final RequestSpecification spec;
 
     public CourierClient() {
@@ -25,7 +25,7 @@ public class CourierClient {
                 .filter(new AllureRestAssured())
                 .body(courier)
                 .when()
-                .post(ENDPOINT_LOGIN_URL);
+                .post(ENDPOINT_COURIER_LOGIN_URL);
     }
 
     @Step("Send POST request to /api/v1/courier")
@@ -33,6 +33,18 @@ public class CourierClient {
         return spec
                 .body(courier)
                 .when()
-                .post(ENDPOINT_CREATE_URL);
+                .post(ENDPOINT_COURIER_URL);
+    }
+
+    @Step("Delete courier")
+    public void deleteCourier(Courier courier){
+        Integer id = spec
+                        .body(courier)
+                        .when()
+                        .post (ENDPOINT_COURIER_LOGIN_URL)
+                        .then().extract().body().path("id");
+        if (id != null) {
+            spec.delete (ENDPOINT_COURIER_URL + "/{id}", id.toString());
+        }
     }
 }
